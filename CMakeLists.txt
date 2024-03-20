@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(qt-wayland-decorations-bradient VERSION 0.1 LANGUAGES CXX)
+project(qt-wayland-decorations-bradient-mkii VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -15,7 +15,7 @@ set(PROJECT_SOURCES
     main.cpp
 )
 
-set(OUT_NAME bradient)
+set(OUT_NAME bradient-mkii)
 add_library(${OUT_NAME} MODULE
     ${PROJECT_SOURCES}
 )

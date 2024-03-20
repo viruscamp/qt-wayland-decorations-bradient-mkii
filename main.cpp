@@ -32,10 +32,10 @@ enum Button
     Minimize
 };
 
-class Q_WAYLANDCLIENT_EXPORT QWaylandBradientDecoration : public QWaylandAbstractDecoration
+class Q_WAYLANDCLIENT_EXPORT QWaylandBradientMkiiDecoration : public QWaylandAbstractDecoration
 {
 public:
-    QWaylandBradientDecoration();
+    QWaylandBradientMkiiDecoration();
 protected:
     QMargins margins(MarginsType marginsType = Full) const override;
     void paint(QPaintDevice *device) override;
@@ -63,7 +63,7 @@ private:
 
 
 
-QWaylandBradientDecoration::QWaylandBradientDecoration()
+QWaylandBradientMkiiDecoration::QWaylandBradientMkiiDecoration()
 {
     QTextOption option(Qt::AlignHCenter | Qt::AlignVCenter);
     option.setWrapMode(QTextOption::NoWrap);
@@ -71,28 +71,28 @@ QWaylandBradientDecoration::QWaylandBradientDecoration()
     m_windowTitle.setTextFormat(Qt::PlainText);
 }
 
-QRectF QWaylandBradientDecoration::closeButtonRect() const
+QRectF QWaylandBradientMkiiDecoration::closeButtonRect() const
 {
     const int windowRight = waylandWindow()->windowContentGeometry().right() + 1;
     return QRectF(windowRight - BUTTON_WIDTH - BUTTON_SPACING * 0 - BUTTONS_RIGHT_MARGIN,
                   (margins().top() - BUTTON_WIDTH) / 2, BUTTON_WIDTH, BUTTON_WIDTH);
 }
 
-QRectF QWaylandBradientDecoration::maximizeButtonRect() const
+QRectF QWaylandBradientMkiiDecoration::maximizeButtonRect() const
 {
     const int windowRight = waylandWindow()->windowContentGeometry().right() + 1;
     return QRectF(windowRight - BUTTON_WIDTH * 2 - BUTTON_SPACING * 1 - BUTTONS_RIGHT_MARGIN,
                   (margins().top() - BUTTON_WIDTH) / 2, BUTTON_WIDTH, BUTTON_WIDTH);
 }
 
-QRectF QWaylandBradientDecoration::minimizeButtonRect() const
+QRectF QWaylandBradientMkiiDecoration::minimizeButtonRect() const
 {
     const int windowRight = waylandWindow()->windowContentGeometry().right() + 1;
     return QRectF(windowRight - BUTTON_WIDTH * 3 - BUTTON_SPACING * 2 - BUTTONS_RIGHT_MARGIN,
                   (margins().top() - BUTTON_WIDTH) / 2, BUTTON_WIDTH, BUTTON_WIDTH);
 }
 
-QMargins QWaylandBradientDecoration::margins(MarginsType marginsType) const
+QMargins QWaylandBradientMkiiDecoration::margins(MarginsType marginsType) const
 {
     if (marginsType == ShadowsOnly)
         return QMargins();
@@ -100,7 +100,7 @@ QMargins QWaylandBradientDecoration::margins(MarginsType marginsType) const
     return QMargins(3, 30, 3, 3);
 }
 
-void QWaylandBradientDecoration::paint(QPaintDevice *device)
+void QWaylandBradientMkiiDecoration::paint(QPaintDevice *device)
 {
     bool active = window()->handle()->isActive();
     QRect wg = waylandWindow()->windowContentGeometry();
@@ -214,7 +214,7 @@ void QWaylandBradientDecoration::paint(QPaintDevice *device)
     p.restore();
 }
 
-bool QWaylandBradientDecoration::clickButton(Qt::MouseButtons b, Button btn)
+bool QWaylandBradientMkiiDecoration::clickButton(Qt::MouseButtons b, Button btn)
 {
     if (isLeftClicked(b)) {
         m_clicking = btn;
@@ -230,7 +230,7 @@ bool QWaylandBradientDecoration::clickButton(Qt::MouseButtons b, Button btn)
     return false;
 }
 
-bool QWaylandBradientDecoration::handleMouse(QWaylandInputDevice *inputDevice, const QPointF &local, const QPointF &global, Qt::MouseButtons b, Qt::KeyboardModifiers mods)
+bool QWaylandBradientMkiiDecoration::handleMouse(QWaylandInputDevice *inputDevice, const QPointF &local, const QPointF &global, Qt::MouseButtons b, Qt::KeyboardModifiers mods)
 
 {
     Q_UNUSED(global);
@@ -257,7 +257,7 @@ bool QWaylandBradientDecoration::handleMouse(QWaylandInputDevice *inputDevice, c
     return true;
 }
 
-bool QWaylandBradientDecoration::handleTouch(QWaylandInputDevice *inputDevice, const QPointF &local, const QPointF &global, QEventPoint::State state, Qt::KeyboardModifiers mods)
+bool QWaylandBradientMkiiDecoration::handleTouch(QWaylandInputDevice *inputDevice, const QPointF &local, const QPointF &global, QEventPoint::State state, Qt::KeyboardModifiers mods)
 {
     Q_UNUSED(global);
     QRect wg = waylandWindow()->windowContentGeometry();
@@ -280,7 +280,7 @@ bool QWaylandBradientDecoration::handleTouch(QWaylandInputDevice *inputDevice, c
     return handled;
 }
 
-void QWaylandBradientDecoration::processPointerTop(QWaylandInputDevice *inputDevice,
+void QWaylandBradientMkiiDecoration::processPointerTop(QWaylandInputDevice *inputDevice,
                                                  const QPointF &local,
                                                  Qt::MouseButtons b,
                                                  Qt::KeyboardModifiers mods,
@@ -339,7 +339,7 @@ void QWaylandBradientDecoration::processPointerTop(QWaylandInputDevice *inputDev
     }
 }
 
-void QWaylandBradientDecoration::processPointerBottom(QWaylandInputDevice *inputDevice,
+void QWaylandBradientMkiiDecoration::processPointerBottom(QWaylandInputDevice *inputDevice,
                                                       const QPointF &local,
                                                       Qt::MouseButtons b,
                                                       Qt::KeyboardModifiers mods,
@@ -374,7 +374,7 @@ void QWaylandBradientDecoration::processPointerBottom(QWaylandInputDevice *input
     }
 }
 
-void QWaylandBradientDecoration::processPointerLeft(QWaylandInputDevice *inputDevice,
+void QWaylandBradientMkiiDecoration::processPointerLeft(QWaylandInputDevice *inputDevice,
                                                     const QPointF &local,
                                                     Qt::MouseButtons b,
                                                     Qt::KeyboardModifiers mods,
@@ -391,7 +391,7 @@ void QWaylandBradientDecoration::processPointerLeft(QWaylandInputDevice *inputDe
     startResize(inputDevice, Qt::LeftEdge, b);
 }
 
-void QWaylandBradientDecoration::processPointerRight(QWaylandInputDevice *inputDevice,
+void QWaylandBradientMkiiDecoration::processPointerRight(QWaylandInputDevice *inputDevice,
                                                      const QPointF &local,
                                                      Qt::MouseButtons b,
                                                      Qt::KeyboardModifiers mods,
@@ -408,19 +408,19 @@ void QWaylandBradientDecoration::processPointerRight(QWaylandInputDevice *inputD
     startResize(inputDevice, Qt::RightEdge, b);
 }
 
-class QWaylandBradientDecorationPlugin : public QWaylandDecorationPlugin
+class QWaylandBradientMkiiDecorationPlugin : public QWaylandDecorationPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID QWaylandDecorationFactoryInterface_iid FILE "bradient.json")
+    Q_PLUGIN_METADATA(IID QWaylandDecorationFactoryInterface_iid FILE "bradient-mkii.json")
 public:
     QWaylandAbstractDecoration *create(const QString&, const QStringList&) override;
 };
 
-QWaylandAbstractDecoration *QWaylandBradientDecorationPlugin::create(const QString& system, const QStringList& paramList)
+QWaylandAbstractDecoration *QWaylandBradientMkiiDecorationPlugin::create(const QString& system, const QStringList& paramList)
 {
     Q_UNUSED(paramList);
     Q_UNUSED(system);
-    return new QWaylandBradientDecoration();
+    return new QWaylandBradientMkiiDecoration();
 }
 
 }
