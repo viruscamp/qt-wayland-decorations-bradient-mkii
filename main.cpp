@@ -23,6 +23,11 @@ namespace QtWaylandClient {
 #define BUTTON_SPACING 5
 #define BUTTON_WIDTH 18
 #define BUTTONS_RIGHT_MARGIN 8
+#define BUTTON_PEN_WIDTH_THICK 2
+#define BUTTON_PEN_WIDTH_THIN 1
+#define ICON_WIDTH 22
+#define TITLE_BAR_HEIGHT 30
+#define FONT_SIZE_PX 14
 
 enum Button
 {
@@ -97,7 +102,7 @@ QMargins QWaylandBradientMkiiDecoration::margins(MarginsType marginsType) const
     if (marginsType == ShadowsOnly)
         return QMargins();
 
-    return QMargins(3, 30, 3, 3);
+    return QMargins(3, TITLE_BAR_HEIGHT, 3, 3);
 }
 
 void QWaylandBradientMkiiDecoration::paint(QPaintDevice *device)
@@ -135,7 +140,7 @@ void QWaylandBradientMkiiDecoration::paint(QPaintDevice *device)
     // Window icon
     QIcon icon = waylandWindow()->windowIcon();
     if (!icon.isNull()) {
-        QRectF iconRect(0, 0, 22, 22);
+        QRectF iconRect(0, 0, ICON_WIDTH, ICON_WIDTH);
         iconRect.adjust(margins().left() + BUTTON_SPACING, 4,
                         margins().left() + BUTTON_SPACING, 4),
         icon.paint(&p, iconRect.toRect());
@@ -151,7 +156,7 @@ void QWaylandBradientMkiiDecoration::paint(QPaintDevice *device)
 
         QRect titleBar = top;
         titleBar.setLeft(margins().left() + BUTTON_SPACING +
-            (icon.isNull() ? 0 : 22 + BUTTON_SPACING));
+            (icon.isNull() ? 0 : ICON_WIDTH + BUTTON_SPACING));
         titleBar.setRight(minimizeButtonRect().left() - BUTTON_SPACING);
 
         p.save();
@@ -161,7 +166,7 @@ void QWaylandBradientMkiiDecoration::paint(QPaintDevice *device)
         int dx = (top.width() - size.width()) /2;
         int dy = (top.height()- size.height()) /2;
         QFont font = p.font();
-        font.setPixelSize(14);
+        font.setPixelSize(FONT_SIZE_PX);
         p.setFont(font);
         QPoint windowTitlePoint(top.topLeft().x() + dx,
                  top.topLeft().y() + dy);
@@ -181,7 +186,7 @@ void QWaylandBradientMkiiDecoration::paint(QPaintDevice *device)
     qreal crossSize = rect.height() / 2.3;
     QPointF crossCenter(rect.center());
     QRectF crossRect(crossCenter.x() - crossSize / 2, crossCenter.y() - crossSize / 2, crossSize, crossSize);
-    pen.setWidth(2);
+    pen.setWidth(BUTTON_PEN_WIDTH_THICK);
     p.setPen(pen);
     p.drawLine(crossRect.topLeft(), crossRect.bottomRight());
     p.drawLine(crossRect.bottomLeft(), crossRect.topRight());
@@ -190,9 +195,11 @@ void QWaylandBradientMkiiDecoration::paint(QPaintDevice *device)
     // Maximize button
     p.save();
     p.setRenderHint(QPainter::Antialiasing, false);
+    pen.setWidth(BUTTON_PEN_WIDTH_THIN);
+    p.setPen(pen);
     rect = maximizeButtonRect().adjusted(4, 5, -4, -5);
     if ((window()->windowStates() & Qt::WindowMaximized)) {
-        qreal inset = 2;
+        qreal inset = BUTTON_PEN_WIDTH_THICK;
         QRectF rect1 = rect.adjusted(inset, 0, 0, -inset);
         QRectF rect2 = rect.adjusted(0, inset, -inset, 0);
         p.drawRect(rect1);
@@ -200,7 +207,7 @@ void QWaylandBradientMkiiDecoration::paint(QPaintDevice *device)
         p.drawRect(rect2);
     } else {
         p.drawRect(rect);
-        p.drawLine(rect.left(), rect.top() + 1, rect.right(), rect.top() + 1);
+        p.drawLine(rect.left(), rect.top() + BUTTON_PEN_WIDTH_THIN, rect.right(), rect.top() + BUTTON_PEN_WIDTH_THIN);
     }
     p.restore();
 
@@ -208,7 +215,7 @@ void QWaylandBradientMkiiDecoration::paint(QPaintDevice *device)
     p.save();
     p.setRenderHint(QPainter::Antialiasing, false);
     rect = minimizeButtonRect().adjusted(5, 5, -5, -5);
-    pen.setWidth(2);
+    pen.setWidth(BUTTON_PEN_WIDTH_THICK);
     p.setPen(pen);
     p.drawLine(rect.bottomLeft(), rect.bottomRight());
     p.restore();
