@@ -43,15 +43,15 @@ enum Button
     Minimize
 };
 
-class Q_WAYLANDCLIENT_EXPORT QWaylandBradientMkiiDecoration : public QWaylandAbstractDecoration
+class Q_WAYLAND_CLIENT_EXPORT QWaylandBradientMkiiDecoration : public QWaylandAbstractDecoration
 {
 public:
     QWaylandBradientMkiiDecoration();
 protected:
-    QMargins margins(MarginsType marginsType = Full) const override;
+    QMargins margins() const override;
     void paint(QPaintDevice *device) override;
     bool handleMouse(QWaylandInputDevice *inputDevice, const QPointF &local, const QPointF &global,Qt::MouseButtons b,Qt::KeyboardModifiers mods) override;
-    bool handleTouch(QWaylandInputDevice *inputDevice, const QPointF &local, const QPointF &global, QEventPoint::State state, Qt::KeyboardModifiers mods) override;
+    bool handleTouch(QWaylandInputDevice *inputDevice, const QPointF &local, const QPointF &global, Qt::TouchPointState state, Qt::KeyboardModifiers mods) override;
 private:
     enum class PointerType {
         Mouse,
@@ -113,11 +113,8 @@ QRectF QWaylandBradientMkiiDecoration::minimizeButtonRect() const
                   (margins().top() - button_width) / 2, button_width, button_width);
 }
 
-QMargins QWaylandBradientMkiiDecoration::margins(MarginsType marginsType) const
+QMargins QWaylandBradientMkiiDecoration::margins() const
 {
-    if (marginsType == ShadowsOnly)
-        return QMargins();
-
     return QMargins(scale(TITLE_BAR_RADIUS), scale(TITLE_BAR_HEIGHT), scale(TITLE_BAR_RADIUS), scale(TITLE_BAR_RADIUS));
 }
 
@@ -288,12 +285,12 @@ bool QWaylandBradientMkiiDecoration::handleMouse(QWaylandInputDevice *inputDevic
     return true;
 }
 
-bool QWaylandBradientMkiiDecoration::handleTouch(QWaylandInputDevice *inputDevice, const QPointF &local, const QPointF &global, QEventPoint::State state, Qt::KeyboardModifiers mods)
+bool QWaylandBradientMkiiDecoration::handleTouch(QWaylandInputDevice *inputDevice, const QPointF &local, const QPointF &global, Qt::TouchPointState state, Qt::KeyboardModifiers mods)
 {
     Q_UNUSED(global);
     QRect wg = waylandWindow()->windowContentGeometry();
 
-    bool handled = state == QEventPoint::Pressed;
+    bool handled = state == Qt::TouchPointState::TouchPointPressed;
     if (handled) {
         if (local.y() <= wg.top() + margins().top()) {
             processPointerTop(inputDevice, local, Qt::LeftButton, mods, PointerType::Touch);
