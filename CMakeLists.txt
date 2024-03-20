@@ -9,7 +9,13 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt6 REQUIRED Core Gui WaylandClient)
+if (NOT DEFINED USE_QT6)
+    find_package(QT NAMES Qt5 REQUIRED Core)
+    find_package(Qt5 REQUIRED Core Gui WaylandClient XkbCommonSupport)
+else()
+    find_package(QT NAMES Qt6 REQUIRED Core)
+    find_package(Qt6 REQUIRED Core Gui WaylandClient)
+endif()
 
 set(PROJECT_SOURCES
     main.cpp
@@ -21,12 +27,19 @@ add_library(${OUT_NAME} MODULE
 )
 
 target_link_libraries(${OUT_NAME} PRIVATE
-    Qt6::Core
-    Qt6::CorePrivate
-    Qt6::Gui
-    Qt6::GuiPrivate
-    Qt6::WaylandClient
-    Qt6::WaylandClientPrivate
+    Qt::Core
+    Qt::CorePrivate
+    Qt::Gui
+    Qt::GuiPrivate
+    Qt::WaylandClient
+    Qt::WaylandClientPrivate
 )
+
+if (NOT DEFINED USE_QT6)
+target_link_libraries(${OUT_NAME} PRIVATE
+    Qt::XkbCommonSupport
+    Qt::XkbCommonSupportPrivate
+)
+endif()
 
 install(TARGETS ${OUT_NAME} DESTINATION ${QT_PLUGINS_DIR}/wayland-decoration-client)

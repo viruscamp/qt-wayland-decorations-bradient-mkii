@@ -35,6 +35,15 @@ namespace QtWaylandClient {
 #define TITLE_BAR_RADIUS 3
 #define FONT_SIZE_PX 14
 
+#if QT_VERSION_MAJOR == 5
+    #define Q_WAYLANDCLIENT_EXPORT Q_WAYLAND_CLIENT_EXPORT
+    #define _TouchState Qt::TouchPointState
+    #define _TouchState_Pressed Qt::TouchPointPressed
+#elif QT_VERSION_MAJOR == 6
+    #define _TouchState QEventPoint::State
+    #define _TouchState_Pressed QEventPoint::Pressed
+#endif
+
 enum Button
 {
     None,
@@ -48,10 +57,14 @@ class Q_WAYLANDCLIENT_EXPORT QWaylandBradientMkiiDecoration : public QWaylandAbs
 public:
     QWaylandBradientMkiiDecoration();
 protected:
+#if QT_VERSION_MAJOR == 5
+    QMargins margins() const override;
+#elif QT_VERSION_MAJOR == 6
     QMargins margins(MarginsType marginsType = Full) const override;
+#endif
     void paint(QPaintDevice *device) override;
     bool handleMouse(QWaylandInputDevice *inputDevice, const QPointF &local, const QPointF &global,Qt::MouseButtons b,Qt::KeyboardModifiers mods) override;
-    bool handleTouch(QWaylandInputDevice *inputDevice, const QPointF &local, const QPointF &global, QEventPoint::State state, Qt::KeyboardModifiers mods) override;
+    bool handleTouch(QWaylandInputDevice *inputDevice, const QPointF &local, const QPointF &global, _TouchState state, Qt::KeyboardModifiers mods) override;
 private:
     enum class PointerType {
         Mouse,
@@ -73,7 +86,6 @@ private:
     QStaticText m_windowTitle;
     Button m_clicking = None;
 };
-
 
 
 QWaylandBradientMkiiDecoration::QWaylandBradientMkiiDecoration()
@@ -113,6 +125,12 @@ QRectF QWaylandBradientMkiiDecoration::minimizeButtonRect() const
                   (margins().top() - button_width) / 2, button_width, button_width);
 }
 
+#if QT_VERSION_MAJOR == 5
+QMargins QWaylandBradientMkiiDecoration::margins() const
+{
+    return QMargins(scale(TITLE_BAR_RADIUS), scale(TITLE_BAR_HEIGHT), scale(TITLE_BAR_RADIUS), scale(TITLE_BAR_RADIUS));
+}
+#elif QT_VERSION_MAJOR == 6
 QMargins QWaylandBradientMkiiDecoration::margins(MarginsType marginsType) const
 {
     if (marginsType == ShadowsOnly)
@@ -120,6 +138,7 @@ QMargins QWaylandBradientMkiiDecoration::margins(MarginsType marginsType) const
 
     return QMargins(scale(TITLE_BAR_RADIUS), scale(TITLE_BAR_HEIGHT), scale(TITLE_BAR_RADIUS), scale(TITLE_BAR_RADIUS));
 }
+#endif
 
 void QWaylandBradientMkiiDecoration::paint(QPaintDevice *device)
 {
@@ -288,12 +307,12 @@ bool QWaylandBradientMkiiDecoration::handleMouse(QWaylandInputDevice *inputDevic
     return true;
 }
 
-bool QWaylandBradientMkiiDecoration::handleTouch(QWaylandInputDevice *inputDevice, const QPointF &local, const QPointF &global, QEventPoint::State state, Qt::KeyboardModifiers mods)
+bool QWaylandBradientMkiiDecoration::handleTouch(QWaylandInputDevice *inputDevice, const QPointF &local, const QPointF &global, _TouchState state, Qt::KeyboardModifiers mods)
 {
     Q_UNUSED(global);
     QRect wg = waylandWindow()->windowContentGeometry();
 
-    bool handled = state == QEventPoint::Pressed;
+    bool handled = state == _TouchState_Pressed;
     if (handled) {
         if (local.y() <= wg.top() + margins().top()) {
             processPointerTop(inputDevice, local, Qt::LeftButton, mods, PointerType::Touch);
