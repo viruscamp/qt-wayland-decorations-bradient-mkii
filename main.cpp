@@ -26,8 +26,13 @@ namespace QtWaylandClient {
 #define BUTTONS_RIGHT_MARGIN 8
 #define BUTTON_PEN_WIDTH_THICK 2
 #define BUTTON_PEN_WIDTH_THIN 1
+#define BUTTON_MAXIMIZE_PADDING_HORIZON 4
+#define BUTTON_MAXIMIZE_PADDING_VERTICAL 5
+#define BUTTON_MINIMIZE_PADDING 5
 #define ICON_WIDTH 22
+#define ICON_PADDING 4
 #define TITLE_BAR_HEIGHT 30
+#define TITLE_BAR_RADIUS 3
 #define FONT_SIZE_PX 14
 
 enum Button
@@ -88,7 +93,7 @@ QRectF QWaylandBradientMkiiDecoration::closeButtonRect() const
 {
     const int windowRight = waylandWindow()->windowContentGeometry().right() + 1;
     int button_width = scale(BUTTON_WIDTH);
-    return QRectF(windowRight - button_width - BUTTON_SPACING * 0 - BUTTONS_RIGHT_MARGIN,
+    return QRectF(windowRight - button_width - scale(BUTTON_SPACING) * 0 - scale(BUTTONS_RIGHT_MARGIN),
                   (margins().top() - button_width) / 2, button_width, button_width);
 }
 
@@ -96,7 +101,7 @@ QRectF QWaylandBradientMkiiDecoration::maximizeButtonRect() const
 {
     const int windowRight = waylandWindow()->windowContentGeometry().right() + 1;
     int button_width = scale(BUTTON_WIDTH);
-    return QRectF(windowRight - button_width * 2 - BUTTON_SPACING * 1 - BUTTONS_RIGHT_MARGIN,
+    return QRectF(windowRight - button_width * 2 - scale(BUTTON_SPACING) * 1 - scale(BUTTONS_RIGHT_MARGIN),
                   (margins().top() - button_width) / 2, button_width, button_width);
 }
 
@@ -104,7 +109,7 @@ QRectF QWaylandBradientMkiiDecoration::minimizeButtonRect() const
 {
     const int windowRight = waylandWindow()->windowContentGeometry().right() + 1;
     int button_width = scale(BUTTON_WIDTH);
-    return QRectF(windowRight - button_width * 3 - BUTTON_SPACING * 2 - BUTTONS_RIGHT_MARGIN,
+    return QRectF(windowRight - button_width * 3 - scale(BUTTON_SPACING) * 2 - scale(BUTTONS_RIGHT_MARGIN),
                   (margins().top() - button_width) / 2, button_width, button_width);
 }
 
@@ -113,20 +118,19 @@ QMargins QWaylandBradientMkiiDecoration::margins(MarginsType marginsType) const
     if (marginsType == ShadowsOnly)
         return QMargins();
 
-    return QMargins(3, scale(TITLE_BAR_HEIGHT), 3, 3);
+    return QMargins(scale(TITLE_BAR_RADIUS), scale(TITLE_BAR_HEIGHT), scale(TITLE_BAR_RADIUS), scale(TITLE_BAR_RADIUS));
 }
 
 void QWaylandBradientMkiiDecoration::paint(QPaintDevice *device)
 {
     bool active = window()->handle()->isActive();
     QRect wg = waylandWindow()->windowContentGeometry();
-    QMargins margins1 = margins();
     QRect clips[] =
     {
-        QRect(wg.left(), wg.top(), wg.width(), margins1.top()),
-        QRect(wg.left(), (wg.bottom() + 1) - margins1.bottom(), wg.width(), margins1.bottom()),
-        QRect(wg.left(), margins1.top(), margins1.left(), wg.height() - margins1.top() - margins1.bottom()),
-        QRect((wg.right() + 1) - margins1.right(), wg.top() + margins1.top(), margins1.right(), wg.height() - margins1.top() - margins1.bottom())
+        QRect(wg.left(), wg.top(), wg.width(), margins().top()),
+        QRect(wg.left(), (wg.bottom() + 1) - margins().bottom(), wg.width(), margins().bottom()),
+        QRect(wg.left(), margins().top(), margins().left(), wg.height() - margins().top() - margins().bottom()),
+        QRect((wg.right() + 1) - margins().right(), wg.top() + margins().top(), margins().right(), wg.height() - margins().top() - margins().bottom())
     };
 
     QRect top = clips[0];
@@ -141,7 +145,7 @@ void QWaylandBradientMkiiDecoration::paint(QPaintDevice *device)
 
     // Title bar
     QPainterPath roundedRect;
-    roundedRect.addRoundedRect(wg, 3, 3);
+    roundedRect.addRoundedRect(wg, scale(TITLE_BAR_RADIUS), scale(TITLE_BAR_RADIUS));
     for (int i = 0; i < 4; ++i) {
         p.save();
         p.setClipRect(clips[i]);
@@ -149,13 +153,15 @@ void QWaylandBradientMkiiDecoration::paint(QPaintDevice *device)
         p.restore();
     }
 
+    int button_spacing = scale(BUTTON_SPACING);
     int icon_width = scale(ICON_WIDTH);
+    int icon_padding = scale(ICON_PADDING);
     // Window icon
     QIcon icon = waylandWindow()->windowIcon();
     if (!icon.isNull()) {
         QRectF iconRect(0, 0, icon_width, icon_width);
-        iconRect.adjust(margins().left() + BUTTON_SPACING, 4,
-                        margins().left() + BUTTON_SPACING, 4),
+        iconRect.adjust(margins().left() + button_spacing, icon_padding,
+                        margins().left() + button_spacing, icon_padding),
         icon.paint(&p, iconRect.toRect());
     }
 
@@ -171,9 +177,9 @@ void QWaylandBradientMkiiDecoration::paint(QPaintDevice *device)
         }
 
         QRect titleBar = top;
-        titleBar.setLeft(margins().left() + BUTTON_SPACING +
-            (icon.isNull() ? 0 : icon_width + BUTTON_SPACING));
-        titleBar.setRight(minimizeButtonRect().left() - BUTTON_SPACING);
+        titleBar.setLeft(margins().left() + button_spacing +
+            (icon.isNull() ? 0 : icon_width + button_spacing));
+        titleBar.setRight(minimizeButtonRect().left() - button_spacing);
 
         p.save();
         p.setClipRect(titleBar);
@@ -213,9 +219,11 @@ void QWaylandBradientMkiiDecoration::paint(QPaintDevice *device)
     p.setRenderHint(QPainter::Antialiasing, false);
     pen.setWidth(pen_width_thin);
     p.setPen(pen);
-    rect = maximizeButtonRect().adjusted(4, 5, -4, -5);
+    int mph = scale(BUTTON_MAXIMIZE_PADDING_HORIZON);
+    int mpv = scale(BUTTON_MAXIMIZE_PADDING_VERTICAL);
+    rect = maximizeButtonRect().adjusted(mph, mpv, -mph, -mpv);
     if ((window()->windowStates() & Qt::WindowMaximized)) {
-        qreal inset = scale(BUTTON_PEN_WIDTH_THICK);
+        qreal inset = pen_width_thick;
         QRectF rect1 = rect.adjusted(inset, 0, 0, -inset);
         QRectF rect2 = rect.adjusted(0, inset, -inset, 0);
         p.drawRect(rect1);
@@ -230,7 +238,8 @@ void QWaylandBradientMkiiDecoration::paint(QPaintDevice *device)
     // Minimize button
     p.save();
     p.setRenderHint(QPainter::Antialiasing, false);
-    rect = minimizeButtonRect().adjusted(5, 5, -5, -5);
+    int mp = scale(BUTTON_MINIMIZE_PADDING);
+    rect = minimizeButtonRect().adjusted(mp, mp, -mp, -mp);
     pen.setWidth(pen_width_thick);
     p.setPen(pen);
     p.drawLine(rect.bottomLeft(), rect.bottomRight());
