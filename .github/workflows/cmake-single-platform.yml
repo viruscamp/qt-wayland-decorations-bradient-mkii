@@ -1,0 +1,36 @@
+name: CMake on a single platform
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+                  
+    - uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: >
+          libwayland-dev
+          qt6-base-dev qt6-base-private-dev qt6-wayland-dev qt6-wayland-private-dev qt6-wayland-dev-tools
+          qtbase5-dev qtbase5-private-dev libqt5waylandclient5-dev qtwayland5-private-dev
+
+    - name: Configure CMake qt5
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build qt5
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Configure CMake qt6
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DUSE_QT6=true
+
+    - name: Build qt6
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -DUSE_QT6=true
