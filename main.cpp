@@ -185,7 +185,12 @@ void QWaylandBradientMkiiDecoration::paint(QPaintDevice *device)
     }
 
     // Window title
+#if QT_VERSION_MAJOR == 6 && QT_VERSION_MINOR >= 7
+    // from qt-6.7.0
+    QString windowTitleText = waylandWindow()->windowTitle();
+#else
     QString windowTitleText = window()->title();
+#endif
     if (!windowTitleText.isEmpty()) {
         QFont font = p.font();
         font.setPixelSize(scale(FONT_SIZE_PX));
