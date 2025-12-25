@@ -17,7 +17,7 @@ if (NOT USE_QT6)
     find_package(Qt5 REQUIRED Core Gui WaylandClient XkbCommonSupport)
 else()
     find_package(QT NAMES Qt6 REQUIRED Core)
-    find_package(Qt6 REQUIRED Core Gui WaylandClient)
+    find_package(Qt6 REQUIRED Core Gui WaylandClient CorePrivate GuiPrivate WaylandClientPrivate)
 endif()
 
 if (HAS_QT6_SUPPORT OR USE_QT6)

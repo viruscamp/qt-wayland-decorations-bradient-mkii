@@ -3,7 +3,7 @@
 _pkgbase=qt-wayland-decorations-bradient-mkii
 pkgbase=$_pkgbase-git
 pkgname=(qt5-wayland-decorations-bradient-mkii-git qt6-wayland-decorations-bradient-mkii-git)
-pkgver=r10.a96b61f
+pkgver=r12.d16d367
 pkgrel=1
 pkgdesc='Qt decoration plugin with HiDPI support base on official plugin bradient'
 arch=('x86_64')
