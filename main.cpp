@@ -42,6 +42,9 @@ namespace QtWaylandClient {
 #elif QT_VERSION_MAJOR == 6
     #define _TouchState QEventPoint::State
     #define _TouchState_Pressed QEventPoint::Pressed
+    #if QT_VERSION_MINOR >=10
+        #define setMouseCursor applyCursor
+    #endif
 #endif
 
 enum Button
